@@ -1,0 +1,219 @@
+<html>
+	<head>
+		<title>Alphabet Game v1.1| By Farooq AR</title>
+		<meta charset="utf-8"> 
+		<meta name='author' content='Farooq AR'>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+			body{
+				margin:0;
+			}
+			#header{
+				background:black;
+				color:white;
+				margin:0;
+				position:relative;
+			}
+			#header h1{
+				display:inline-block;
+				margin:0;
+			}
+			#header .timer{
+				display:inline-block;
+				visibility:hidden;
+			}
+			#header .contr{
+				display:inline-block;
+				float:right;
+				margin-top:10px;margin-left:5px;
+			}
+			#header .score{
+				display:inline-block;
+			}
+			
+			#game{
+				position:relative;
+				margin:40px;
+				width:700px;
+				height:500px;
+				margin:auto;
+			}
+			#game .alphabet{
+				position:relative;
+				float:left;
+				font-family:verdana;
+				border-radius:50%;
+				margin:10px;padding:30px;
+				background :-webkit-radial-gradient(#00B3FF,#00A2FF,#0088FF);
+				background :-moz-radial-gradient(#00B3FF,#00A2FF,#0088FF);
+				background :radial-gradient(#00B3FF,#00A2FF,#0088FF);
+				-webkit-animation:alphabet .5s forwards;
+				-moz-animation:alphabet .5s forwards;
+				animation:alphabet .5s forwards;
+			}
+			@-webkit-keyframes alphabet{
+				0%{-webkit-transform:translate3d(0,100px,0);opacity:0;}
+				100%{-webkit-transform:translate3d(0,0px,0);opacity:1;}
+			}
+			@-moz-keyframes alphabet{
+				0%{-moz-transform:translate3d(0,100px,0);opacity:0;}
+				100%{-moz-transform:translate3d(0,0px,0);opacity:1;}
+			}
+			@keyframes alphabet{
+				0%{transform:translate3d(0,100px,0);opacity:0;}
+				100%{transform:translate3d(0,0px,0);opacity:1;}
+			}
+			#footer{
+				text-align:center;
+			}
+			#footer .heart{
+				color:red;
+			}
+			.notif{
+				padding:10px;
+				background:#0088FF;
+				border-radius:5px;
+				display:inline-block;
+				position:absolute;
+				top:20%;
+				color:white;
+				font-size:1.2em;
+				left:10px;
+				-webkit-animation:notif 3s forwards;
+				-moz-animation:notif 3s forwards;
+				animation:notif 3s forwards;
+			}
+			.result{
+				padding:20px;
+				width:95px;
+				height:40px;
+				position:absolute;
+				top:0; bottom:0;left:0;right:0;
+				background:black;
+				color:white;
+				font-size:1.2em;
+				margin:auto;
+			}
+			@-webkit-keyframes notif{
+				0%{-webkit-transform:translate3d(0,-100px,0);opacity:0;visibility:hidden;}
+				20%,80%{-webkit-transform:translate3d(0,0,0);opacity:1;visibility:visible;}
+				100%{-webkit-transform:translate3d(0,100px,0);opacity:0;visibility:hidden;}
+			}
+			@-moz-keyframes notif{
+				0%{-moz-transform:translate3d(0,-100px,0);opacity:0;visibility:hidden;}
+				20%,80%{-moz-transform:translate3d(0,0,0);opacity:1;visibility:visible;}
+				100%{-moz-transform:translate3d(0,100px,0);opacity:0;visibility:hidden;}
+			}
+			@keyframes notif{
+				0%{transform:translate3d(0,-100px,0);opacity:0;visibility:hidden;}
+				20%,80%{transform:translate3d(0,0,0);opacity:1;visibility:visible;}
+				100%{transform:translate3d(0,100px,0);opacity:0;visibility:hidden;}
+			}
+			@media(max-width:600px){
+				h1{
+					font-size:1em;
+				}
+				#footer,#header h1{
+					display:none;
+				}
+				#header .stats{
+					margin:0;
+				}
+				#header .contr{
+					display:none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id='header'>
+			<h1>Alphabet Race</h1>
+			<div class='timer'><span class='sec'></span>:<span class='milisec'></span></div>
+			<div class='score'></div>
+			<div class='contr'>Made By Farooq AR</div>
+		</div>
+		<div class='notif'>Start Typing the Alphabets</div>
+		<div id='game'>
+			
+		</div>
+		<div id='footer'>Made with <span class='heart'>&#9829;</span> & Javascript</br>V1.1</div>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+		<script type='text/javascript'>
+		/*
+			Alphabet Game V1.1
+			By Farooq AR A beginner in programming
+			Made with ♥ and jQuery
+			If you find any bugs please suggest me the correct way so I can fix them in the next version
+			farooqbckk@gmail.com
+		*/
+		$(document).ready(function(){
+			var isStarted =false;
+			var time =time_1= 0;
+			var score = 0;
+			function createAlphabets(){
+				for(i=0;i<=25;i++){
+					var str = String.fromCharCode(65+i);
+					var alphabet = "<span class='alphabet "+str.toLowerCase()+"'>"+str+"</span>";
+					$('#game').append(alphabet);
+				}
+			}
+			createAlphabets();
+			$(document).keypress(function(e){
+				
+				$('.timer').css({'visibility':'visible'});
+				isStarted = true;
+				var currentKey = String.fromCharCode(e.which).toUpperCase();
+				var currentAlphabet = $('#game .alphabet:first').text();
+				if(currentKey == currentAlphabet){
+					$('#game .alphabet:first').remove();
+					score+=50;
+				}
+				if(currentKey!=currentAlphabet && currentAlphabet!=''){
+					$('#game .alphabet:first').css({'background':'red'});
+					score-=25;
+				}
+				if(currentAlphabet=='Z'){
+					clearInterval(startTimer);
+					clearInterval(startTimer_1);
+					if(time>=10){
+						var result = "<div class='result'>Time: "+time+":"+Math.floor(time_1/10)+"</br>Score: "+score+"</div>";
+					}
+					else{
+						var result = "<div class='result'>Time: 0"+time+":"+Math.floor(time_1/10)+"</br>Score: "+score+"</div>";
+					}
+					$('#game').after(result);
+				}
+				if(score<0){
+					score=0;
+				}
+				$('#header .score').text("Score:  "+score);
+			});
+			startTimer = setInterval(function(){
+				if(isStarted){
+					time++;
+					if(time<10){
+						$('#header .timer .sec').text('0'+time);
+					}
+					else{
+						$('#header .timer .sec').text(time);
+					}
+				}
+			},1000);
+			startTimer_1 = setInterval(function(){
+				if(isStarted){
+					time_1++;
+					if(time_1==1000){
+						time_1=0;
+					}
+					if(time_1<10){
+						$('#header .timer .milisec').text('0'+Math.floor(time_1/10));
+					}
+					else{
+						$('#header .timer .milisec').text(Math.floor(time_1/10));
+					}
+				}
+			},1);
+		});
+		</script>
+	</body>
+</html>

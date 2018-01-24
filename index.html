@@ -1,0 +1,260 @@
+<html>
+	<head>
+		<title>Typing Test v1.2| By Farooq AR</title>
+		<meta charset="utf-8"> 
+		<meta name='author' content='Farooq AR'>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel='stylesheet' type='text/css' href='load_1.css'/>
+		<style>
+		body{
+			margin:0;
+		}
+			#lesson{
+				width:70%; 
+				max-height:50%;
+				overflow-x:hidden;
+				margin:0 auto;
+				font-size:1.5em;
+				text-align:justify;
+				position:relative;
+				line-height:25px;
+				user-select:none;
+				-moz-user-select:none;
+				-webkit-user-select:none;
+			}
+			.load{
+				margin:auto;
+				top:20%;
+				left:0;right:0;
+				position:absolute;
+				width: 50px; height:50px;
+			}
+			#lesson .correct{
+				background:green;
+				color:white;
+			}
+			#lesson .wrong{
+				background:red;
+				color:white;
+			}
+			#lesson .current{
+				background:rgba(0,0,0,0.09);
+			}
+			#typing{
+				width:70%;
+				height:40%;
+				margin:0 auto;
+				resize:none;
+				font-size:1.5em;
+				border:none;
+				display:block;
+				border-radius:3px;
+				padding:5px;
+				background:rgba(0,0,0,0.05);
+			}
+			
+			#typing:focus{
+				outline:none;
+			}
+			#header{
+				background:black;
+				color:white;
+				margin:0;
+				position:relative;
+			}
+			#header h1{
+				display:inline-block;
+				margin:0;
+			}
+			#header .stats{
+				margin-top:10px;
+				margin-left:10px;
+				display:inline-block;
+				font-style:bold;
+			}
+			#header .contr{
+				display:inline-block;
+				float:right;
+				margin-top:10px;margin-left:5px;
+			}
+			#header .startTyping{
+				display:none;
+			}
+			#footer{
+				text-align:center;
+			}
+			#footer .heart{
+				color:red;
+			}
+			#results{
+				display:none;
+				position:absolute;
+				top: 0;bottom:0;left:0;right:0;
+				margin:auto;
+				width:40%;
+				height:40%;
+				background:#0088FF;
+				color:white;
+				border-radius:5px;
+				z-index:999;
+			}
+			#results table{
+				display:inline-block;
+				margin:10px;
+			}
+			#results table td{
+				color:inherit;
+				font-size:2em;
+			}
+			@media(max-width:600px){
+				#lesson,#typing{
+					margin:0px;
+					width:100%;
+					float:left;
+					height:50%;
+					font-size:1em;
+				}
+				h1{
+					font-size:1em;
+				}
+				#footer,#header h1{
+					display:none;
+				}
+				#header .stats{
+					margin:0;
+				}
+				#header .contr{
+					display:none;
+				}
+				.load{
+					width: 32px; height: 32px;
+				}
+				#lesson{
+					background-image:url('typing.png');
+					background-repeat:no-repeat;
+					background-position:center center;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class='load _1'><div class='_1_inner'></div></div>
+		<div id='header'>
+			<h1>Typing Test</h1>
+			<div id='accuracy' class='stats'></div>
+			<div id='grossW' class='stats'></div>
+			<span class='startTyping'>Start Typing, No Time limit.</span>
+			<div class='contr'>Made By Farooq AR</div>
+		</div>
+		<p id='lesson'></p>
+		<textarea id='typing'></textarea>
+		<div id='footer'>Made with <span class='heart'>&#9829;</span> & Javascript</br>V1.2(updated)</div>
+		<script type='text/javascript' src='jquery-library.js'></script>
+		<script type='text/javascript' src='jquery.cookie.js'></script>
+		<script type='text/javascript'>
+		/*
+			Typing Test V1.2
+			By Farooq AR A beginner in programming
+			Made with ♥ and Javascript
+			If you find any bugs please suggest me the correct way so I can fix them in the next version
+			farooqbckk@gmail.com
+		*/
+			var lessonT = document.getElementById('lesson');var lesson,lessw;
+			var lessonsLength = 6;
+			var lineH = $('#lesson').css('line-height');
+			var lessonNum = Math.floor(Math.random()*lessonsLength)+1;
+			var type = document.getElementById('typing');
+			var currentLength,errors,grossW,accuracy,grade;
+			var correct = document.getElementsByClassName('correct');
+			var errors = document.getElementsByClassName('wrong');
+			var accur = document.getElementById('accuracy');
+			var grossw = document.getElementById('grossW');
+			var counter=0;
+			var mistyped =[];
+			var time = 0;
+			var isStarted = false;
+			var alphabets =[];var puncMarks= [];
+			for(i=0;i<=25;i++){
+				alphabets.push(String.fromCharCode(65+i));
+			}
+			for(a=0;a<=25;a++){
+				alphabets.push(String.fromCharCode(65+a).toLowerCase());
+			}
+			puncMarks.push(",",'"',',','.',' ',';');
+			$('#typing').focus().val('');
+			$("#lesson").load("lessons/"+lessonNum+".html",function(response,status,xhr){
+				if(status=='error'){
+					$("#lesson").html("Error while loading the lesson");
+				}
+				$('.load').hide();
+			});
+			$(document).ajaxStop(function(){
+				lesson = $('#lesson').text();
+				lessw = lesson.split("");
+				$('#header .startTyping').slideDown(function(){$(this).delay(1000).slideUp();});
+			});
+			type.onkeydown = function (e){
+				if(e.which==17 || e.which==8){
+					e.preventDefault();
+					return false;
+				}
+			};
+			type.onkeypress = function (e){
+				isStarted = true;
+				var currentLetter = String.fromCharCode(e.which);
+				currentLength = type.value.length;
+				if(lesson.charAt(currentLength)==currentLetter){
+					//correct
+					lessw.splice(currentLength,1,"<span class='correct'>"+lesson.charAt(currentLength)+"</span>");
+					
+				}
+				else{
+					//error
+					lessw.splice(currentLength,1,"<span class='wrong'>"+lesson.charAt(currentLength)+"</span>");
+				}
+				
+				lessonT.innerHTML = lessw.join("").toString();
+				accuracy = (correct.length/(correct.length+errors.length))*100;
+				accur.innerHTML = "Accuracy: "+accuracy.toFixed(2)+"%";
+				if(currentLength == lesson.length-1){
+					stopTyping();
+				}
+				counter++;
+			};
+			function stopTyping(){
+				type.onkeydown = function (e){
+					if(e.which == e.which){
+						e.preventDefault();
+						return false;
+					}
+				};
+				isStarted = false;
+				clearInterval(startTimer);
+				netW=(((currentLength+1)/5)-errors.length/4)/(time/60);
+				if(accuracy<10 || netW<0){netW=0;}
+				for(j=0;j<alphabets.length;j++){
+						mistyped.push([alphabets[j],$('#lesson .wrong:contains("'+alphabets[j]+'")').length]);
+				}
+				for(k=0;k<puncMarks.length;k++){
+					mistyped.push([puncMarks[k],$('#lesson .wrong:contains("'+puncMarks[k]+'")').length]);
+				}
+				mistyped.sort(function(a,b){return b[1]-a[1]});
+				$.cookie('mistyped',JSON.stringify(mistyped),{path:'/'});
+				$.cookie('accuracy',accuracy.toFixed(2),{path:'/'});
+				$.cookie('netW',netW.toFixed(2),{path:'/'});
+				window.location = 'result.html';
+			}
+			startTimer = setInterval(function(isStart){
+				if(isStarted){
+					time++;
+					grossW=(currentLength/5)/(time/60);
+					if(grossW<=0){
+						grossW = 0;
+					}
+					grossw.innerHTML = "Gross WPM: "+grossW.toFixed(2)+" WPM";
+				}
+				
+			},1000);
+		</script>
+	</body>
+</html>

@@ -1,0 +1,126 @@
+<html>
+	<head>
+		<title>Result</title>
+		<style>
+			#results{
+				width:80%;
+				margin:0 auto;
+				font-family:calibri,consolas;
+			}
+			#results #graph{
+				position:relative;
+				padding-right:20px;
+				height:300px;
+				display:inline-block;
+				border:1px solid rgba(0,0,0,.09);
+			}
+			#graph .y{
+				position:absolute;
+				display:inline-block;
+				left:-30px;
+				width:30px;
+				bottom:0;
+				height:100%;
+			}
+			#graph h3{
+				position:absolute;
+				text-align:center;
+				left:-100px;
+				transform: rotateZ(-90deg) translateX(-180%);
+			}
+			#graph h2{
+				position:absolute;
+				top:0;left:0;bottom:0;
+				right:0;
+				text-align:center;
+				margin:auto;
+				display:none;
+			}
+			#graph .y span{
+				display:block;
+				margin-bottom:29px;
+			}
+			#graph .graph{
+				margin-left:20px;
+				width:25px;
+				height:100%;
+				float:left;
+				position:relative;	
+			}
+			.graph .bar{
+				position:absolute;
+				bottom:0;
+				background:rgba(0,0,0,0.02);
+				border-left:1px solid rgba(0,0,0,0.09);
+				border-top:1px solid rgba(0,0,0,0.09);
+				border-right:1px solid rgba(0,0,0,0.09);
+				width:inherit;
+			}
+			.graph .bar:hover{
+				border-color:rgba(0,0,0,.5);
+			}
+			.graph .alph{
+				position:absolute;
+				width:inherit;
+				text-align:center;
+				bottom:-20px;
+			}
+			.space{
+				-webkit-transform: rotateZ(-90deg) translateX(-20px);
+				-moz-transform: rotateZ(-90deg) translateX(-20px);
+				transform: rotateZ(-90deg) translateX(-20px);
+			}
+		</style>
+	</head>
+	<body>
+		<div id='results'>
+			<h1>RESULT</h1>
+			<table id='stats'>
+					<tr><td>Accuracy:</td><td class='accuracy'></td></tr>
+					<tr><td>Net Speed:</td><td class='net'></td></tr>
+					<tr></tr>
+			</table>	
+			<div id='graph'>
+				<h3>Errors</h3>
+				<h2></h2>
+				<div class='y'>
+					<span>300</span>
+					<span>250</span>
+					<span>200</span>
+					<span>150</span>
+					<span>100</span>
+					<span>50</span>
+				</div>
+				<div class='graph'><span class='alph alph_1'></span><div class='bar _1'></div></div>
+				<div class='graph'><span class='alph alph_2'></span><div class='bar _2'></div></div>
+				<div class='graph'><span class='alph alph_3'></span><div class='bar _3'></div></div>
+				<div class='graph'><span class='alph alph_4'></span><div class='bar _4'></div></div>
+				<div class='graph'><span class='alph alph_5'></span><div class='bar _5'></div></div>
+				<div class='graph'><span class='alph alph_6'></span><div class='bar _6'></div></div>
+			</div>
+		<script type='text/javascript' src='jquery-library.js'></script>
+		<script type='text/javascript' src='jquery.cookie.js'></script>
+		<script type='text/javascript'>
+			var mistyped = $.cookie('mistyped');
+			var accuracy = $.cookie('accuracy')||'N/A';
+			var netW = $.cookie('netW')||'N/A';
+			$('#stats .accuracy').text(accuracy+"%");
+			$('#stats .net').text(netW+" WPM");
+			if(mistyped==undefined){
+				 $("#graph h2").text('N/A').show();
+			}else{
+				mistyped = JSON.parse(mistyped);
+				if(mistyped[0][1]!=0){
+					for(a=0;a<=6;a++){
+						$('.graph .alph:eq("'+a+'")').text(mistyped[a][0]);
+						$('.graph ._'+(a+1)).attr("title",mistyped[a][0].replace(" ","Space")+' : '+mistyped[a][1]+' Errors').animate({'height':mistyped[a][1]+'px'});
+					}
+				}
+				else{
+					$('#graph h2').text('No Errors').show();
+				}
+				$('.graph .alph:contains(" ")').addClass('space').text('Space');
+			}
+		</script>
+	</body>
+</html>
